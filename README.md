@@ -2,7 +2,7 @@
 
 ## Overview
 
-Joshua's Chaos is a Python-based security chaos engineering tool inspired by the 1980s movie "WarGames". The tool simulates security chaos experiments that assess the security postures of AWS environments, particularly the integrity of S3 buckets. It's a work-in-progress, currently in a beta phase, and contributions are welcome.
+Joshua's Chaos is a Python-based security chaos engineering tool inspired by the 1980s movie "WarGames". The tool simulates security chaos experiments that assess the security postures of AWS environments. It's a work-in-progress, currently in a beta phase, and contributions are welcome.
 
 As an homage to the movie, Joshua's Chaos prints messages slowly to the console, building suspense while preparing and running security chaos experiments.
 
