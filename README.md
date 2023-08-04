@@ -6,7 +6,7 @@ Joshua's Chaos is a Python-based security chaos engineering tool inspired by the
 
 As an homage to the movie, Joshua's Chaos prints messages slowly to the console, building suspense while preparing and running security chaos experiments.
 
-The tool is designed to be as user-friendly as possible. To use it, simply run the main script and follow the interactive console prompts.
+The tool is designed to be as user-friendly as possible. To use it, simply run the main script and follow the interactive console prompts. Works well if ran in AWS CloudShell. 
 
 ## Prerequisites
 
