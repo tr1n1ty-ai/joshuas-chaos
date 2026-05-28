@@ -1,0 +1,67 @@
+allowed_accounts:
+  - "REPLACE_WITH_YOUR_LAB_ACCOUNT_ID"
+
+allowed_regions:
+  - "us-east-1"
+  - "us-east-2"
+  - "us-west-2"
+
+impact_mode: "low"
+
+resource_safety:
+  required_tag_key: "AttackLab"
+  required_tag_value: "true"
+  allowed_name_prefix: "AttackLab"
+
+modules:
+  s3_versioning_recovery:
+    enabled: true
+    approved_buckets: []
+
+  iam_self_escalation:
+    enabled: true
+
+  create_access_key_abuse:
+    enabled: true
+
+  trust_policy_abuse:
+    enabled: true
+
+  passrole_lambda:
+    enabled: true
+
+  passrole_ecs:
+    enabled: true
+
+  passrole_cloudformation:
+    enabled: true
+
+  existing_lambda_takeover:
+    enabled: true
+
+  codebuild_abuse:
+    enabled: true
+
+  glue_job_abuse:
+    enabled: true
+
+  ssm_sendcommand_abuse:
+    enabled: true
+
+  ec2_imds_exposure:
+    enabled: true
+
+  ecs_task_role_exposure:
+    enabled: true
+
+  secretsmanager_data_access:
+    enabled: true
+
+  cross_account_role_chain:
+    enabled: true
+    allowed_role_arns: []
+
+  bedrock_agent_tool_abuse:
+    enabled: false
+    allowed_agent_ids: []
+    allowed_action_groups: []

@@ -1,60 +1,140 @@
-# Joshua's Chaos: Security Chaos Engineering Tool
+# Joshua's Chaos: AWS Security Chaos Engineering Framework
+
+> **FOR AUTHORIZED USE ONLY.** This tool is designed exclusively for authorized AWS lab environments, purple-team exercises, detection engineering, and security chaos engineering. Never run against production accounts or systems without explicit written authorization.
+
+---
 
 ## Overview
 
-Joshua's Chaos is a Python-based security chaos engineering tool inspired by the 1980s movie "WarGames". The tool simulates security chaos experiments that assess the security postures of AWS environments. It's a work-in-progress, currently in a beta phase, and contributions are welcome.
+Joshua's Chaos is a modular Python framework for AWS security chaos engineering and attack-path validation. It includes 16 purpose-built modules covering privilege escalation, credential access, lateral movement, and execution scenarios — all mapped to MITRE ATT&CK techniques.
 
-As an homage to the movie, Joshua's Chaos prints messages slowly to the console, building suspense while preparing and running security chaos experiments.
+The tool retains its WarGames-inspired terminal UI (CPE1704TKS sequence, GREETINGS PROFESSOR FALKEN) while providing a production-grade safety architecture.
 
-The tool is designed to be as user-friendly as possible. To use it, simply run the main script and follow the interactive console prompts. Works well if ran in AWS CloudShell. 
+## Safety Architecture
 
-## Prerequisites
+Every execution is gated by multiple layers of safety:
 
-- Python 3.7 or higher
-- Boto3 Python Library
-- AWS account with access to S3 services
-- AWS credentials configured on your local machine
+- **Dry-run is the default** — no changes are made unless `--execute` is explicitly passed
+- **Three-flag execute gate**: `--execute`, `--confirm-account <account-id>`, `--i-understand-this-is-authorized`
+- **Account allowlist**: refuses to run unless `sts:GetCallerIdentity` returns an account in `config.yaml`
+- **Region allowlist**: refuses to operate in non-allowlisted regions
+- **Resource safety**: execute mode only targets resources tagged `AttackLab=true` or named with the `AttackLab` prefix
+- **Fail closed**: exits if `config.yaml` is missing or malformed
+- **No credential exposure**: all secret values, access keys, and session tokens are masked in output and never logged
+- **No disabling security controls**: no CloudTrail, GuardDuty, SCPs, or IAM Access Analyzer disruption
 
-## Experiments
+## Installation
 
-Joshua's Chaos includes experiments to:
+Requires Python 3.11+.
 
-1. **Test S3 bucket versioning:** The tool first disables versioning for randomly selected S3 buckets, then checks if it can be re-enabled. The goal of this test is to identify how long it takes to discover and remediate such changes, simulating an attacker attempting to sabotage data recovery options.
+```bash
+git clone https://github.com/user/joshuas-chaos.git
+cd joshuas-chaos
+pip install -r requirements.txt
+```
 
-Please note that these experiments can disrupt AWS services, so they should be run in a testing or staging environment, never in production.
+Or install as a package:
+
+```bash
+pip install -e .
+```
+
+## Configuration
+
+Edit `config.yaml` before running:
+
+```yaml
+allowed_accounts:
+  - "YOUR_LAB_ACCOUNT_ID"   # Must match sts:GetCallerIdentity
+
+allowed_regions:
+  - "us-east-1"
+  - "us-east-2"
+
+resource_safety:
+  required_tag_key: "AttackLab"
+  required_tag_value: "true"
+  allowed_name_prefix: "AttackLab"
+```
 
 ## Usage
 
-1. Install the required dependencies:
-   ```
-   pip install boto3 curses colorama
-   ```
+### Interactive Menu (WarGames UI)
 
-2. Clone the repository:
-   ```
-   git clone https://github.com/user/joshuas-chaos.git
-   ```
+```bash
+python main.py
+```
 
-3. Navigate to the cloned directory:
-   ```
-   cd joshuas-chaos
-   ```
+### CLI Commands
 
-4. Run the script:
-   ```
-   python main.py
-   ```
+```bash
+# List all modules
+python main.py list
 
-5. Follow the on-screen prompts to execute an experiment.
+# Describe a module
+python main.py describe passrole_lambda
 
-## Contribution
+# Dry run (default, no changes)
+python main.py run passrole_lambda --dry-run
 
-This project is in its early stages, and we'd love to see your contributions! You can contribute in many ways:
+# Execute mode (requires all three flags)
+python main.py run passrole_lambda \
+    --execute \
+    --confirm-account 123456789012 \
+    --i-understand-this-is-authorized
 
-- **Bug Reports:** Found a problem? Let us know.
-- **Feature Requests:** Have an idea for a new experiment? We'd love to hear it.
-- **Pull Requests:** Got something you want to add or change? Please feel free to fork, change, and submit a pull request.
+# Cleanup
+python main.py cleanup passrole_lambda --confirm-account 123456789012
+```
 
-## Note
+## Modules
 
-Joshua's Chaos is intended for legal security testing and educational purposes only. Any misuse of this software will not be the responsibility of the author. Use it responsibly.
+| Module | Category | MITRE ATT&CK |
+|--------|----------|--------------|
+| `s3_versioning_recovery` | data-protection | T1485, T1486 |
+| `iam_self_escalation` | privilege-escalation | T1098 |
+| `create_access_key_abuse` | credential-access | T1098.001 |
+| `trust_policy_abuse` | privilege-escalation | T1098.003 |
+| `passrole_lambda` | privilege-escalation | T1098, T1610 |
+| `passrole_ecs` | privilege-escalation | T1610 |
+| `passrole_cloudformation` | privilege-escalation | T1098 |
+| `existing_lambda_takeover` | persistence | T1525 |
+| `codebuild_abuse` | execution | T1610 |
+| `glue_job_abuse` | execution | T1610 |
+| `ssm_sendcommand_abuse` | execution | T1651 |
+| `ec2_imds_exposure` | credential-access | T1552.005 |
+| `ecs_task_role_exposure` | credential-access | T1552.005 |
+| `secretsmanager_data_access` | credential-access | T1555 |
+| `cross_account_role_chain` | lateral-movement | T1550.001 |
+| `bedrock_agent_tool_abuse` | execution | T1059 |
+
+## Running Tests
+
+```bash
+pytest -v -m unit
+```
+
+Tests use `botocore.stub.Stubber` and do not require real AWS credentials.
+
+## Project Structure
+
+```
+joshuas_chaos/
+  core/           # Framework infrastructure (config, safety, AWS context, etc.)
+  modules/        # 16 chaos modules, each with check_prereqs/dry_run/execute/cleanup
+main.py           # Entry point shim
+config.yaml       # Safety configuration (edit before running)
+tests/            # Unit tests with botocore Stubber mocking
+```
+
+## Adding a New Module
+
+1. Create `joshuas_chaos/modules/your_module/` with `__init__.py` and `module.py`
+2. Subclass `ChaosModule` from `joshuas_chaos.modules`
+3. Implement `check_prereqs`, `dry_run`, `execute`, `cleanup`
+4. Set `MODULE = YourModuleClass()` at module level for auto-discovery
+5. Add `your_module:` section to `config.yaml`
+
+## Legal Notice
+
+This software is for authorized security testing only. Use only in accounts and environments where you have explicit written authorization. The authors accept no responsibility for unauthorized or harmful use.
