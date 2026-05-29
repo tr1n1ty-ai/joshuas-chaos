@@ -125,3 +125,18 @@ modules:
 
   ssm_start_session:
     enabled: true
+
+  ec2_security_group_open_port:
+    enabled: true
+
+  ec2_share_ami:
+    enabled: true
+
+  ec2_share_ebs_snapshot:
+    enabled: true
+
+  rds_share_snapshot:
+    enabled: true
+
+  s3_backdoor_bucket_policy:
+    enabled: true
