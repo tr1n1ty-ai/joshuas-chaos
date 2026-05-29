@@ -92,3 +92,15 @@ modules:
 
   console_login_without_mfa:
     enabled: true
+
+  ec2_get_password_data:
+    enabled: true
+
+  ec2_steal_instance_credentials:
+    enabled: true
+
+  secretsmanager_batch_retrieve:
+    enabled: true
+
+  ssm_retrieve_securestring:
+    enabled: true
