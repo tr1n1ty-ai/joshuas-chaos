@@ -65,3 +65,30 @@ modules:
     enabled: false
     allowed_agent_ids: []
     allowed_action_groups: []
+
+  cloudtrail_delete:
+    enabled: true
+
+  cloudtrail_event_selectors:
+    enabled: true
+
+  cloudtrail_lifecycle_rule:
+    enabled: true
+
+  cloudtrail_stop:
+    enabled: true
+
+  dns_delete_logs:
+    enabled: true
+
+  organizations_leave:
+    enabled: true
+
+  vpc_remove_flow_logs:
+    enabled: true
+
+  s3_ransomware_detection:
+    enabled: true
+
+  console_login_without_mfa:
+    enabled: true
