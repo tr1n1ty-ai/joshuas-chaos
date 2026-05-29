@@ -170,3 +170,6 @@ modules:
 
   rolesanywhere_trust_anchor:
     enabled: true
+
+  iam_update_login_profile:
+    enabled: true
