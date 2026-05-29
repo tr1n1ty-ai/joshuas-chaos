@@ -104,3 +104,12 @@ modules:
 
   ssm_retrieve_securestring:
     enabled: true
+
+  ec2_download_user_data:
+    enabled: true
+
+  ec2_enumerate_from_instance:
+    enabled: true
+
+  ses_enumerate:
+    enabled: true
