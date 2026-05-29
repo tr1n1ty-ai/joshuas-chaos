@@ -146,3 +146,27 @@ modules:
 
   ec2_serial_console_ssh:
     enabled: true
+
+  iam_backdoor_role:
+    enabled: true
+
+  iam_create_admin_user:
+    enabled: true
+
+  iam_create_backdoor_role:
+    enabled: true
+
+  iam_create_user_login_profile:
+    enabled: true
+
+  lambda_backdoor_function:
+    enabled: true
+
+  lambda_layer_extension:
+    enabled: true
+
+  sts_federation_token:
+    enabled: true
+
+  rolesanywhere_trust_anchor:
+    enabled: true
