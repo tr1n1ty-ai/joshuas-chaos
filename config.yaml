@@ -140,3 +140,9 @@ modules:
 
   s3_backdoor_bucket_policy:
     enabled: true
+
+  ec2_instance_connect:
+    enabled: true
+
+  ec2_serial_console_ssh:
+    enabled: true
