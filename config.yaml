@@ -113,3 +113,15 @@ modules:
 
   ses_enumerate:
     enabled: true
+
+  ec2_launch_unusual_instances:
+    enabled: true
+
+  ec2_user_data_execution:
+    enabled: true
+
+  sagemaker_lifecycle_config:
+    enabled: true
+
+  ssm_start_session:
+    enabled: true
